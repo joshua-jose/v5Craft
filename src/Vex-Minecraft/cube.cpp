@@ -33,16 +33,19 @@ static const int indices[6][6] = {
     {0, 3, 1, 0, 2, 3}
 };
 
-Cube::Cube(struct CubePosition icoordinate, Matrix space, bool air){
+Cube::Cube(struct CubePosition icoordinate,TextureSheet tex, bool air){
   coordinate = icoordinate;
-  modelSpace = space;
+  modelSpace = Matrix::Translate(Vector3f(coordinate.x*1.9,coordinate.y*1.9,coordinate.z*1.9)) * Matrix::RotateX(180);
   mesh = new Mesh(6);
   int32 vertexCount = 4, triangleCount= 2;
+
+  int textures[6][2] = {{0,14},{0,14},{0,15},{0,13},{0,14},{0,14}};
+
   for (int32 i = 0; i < mesh->SubsetCount; i++)
   {
     Subset *subset = new Subset(vertexCount, triangleCount);
 
-    subset->AppliedTexture = new Texture(256,256);
+    subset->AppliedTexture = new Texture(tex.getTexture(textures[i][0],textures[i][1]),16,16);
 
     for (int32 a = 0; a < vertexCount; a++)
     {
@@ -69,5 +72,5 @@ Cube::Cube(struct CubePosition icoordinate, Matrix space, bool air){
 
 void Cube::render(Light *light){
   mesh->Draw(modelSpace);
-  shadow->Draw(light, modelSpace, 20);
+  //shadow->Draw(light, modelSpace, 20);
 }

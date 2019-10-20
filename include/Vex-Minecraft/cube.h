@@ -3,7 +3,7 @@
 
 class Cube{
 public:
-  Cube(struct CubePosition icoordinate, Matrix space,bool air=false);
+  Cube(struct CubePosition icoordinate,TextureSheet tex,bool air=false);
   CubePosition coordinate = CubePosition(0,0,0);
   Mesh *mesh;
   ShadowVolume *shadow;

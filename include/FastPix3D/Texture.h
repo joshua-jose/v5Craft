@@ -1,3 +1,4 @@
+#include <vector>
 class Texture
 {
 private:
@@ -10,6 +11,7 @@ private:
 public:
 	Texture(string path);
 	Texture(int width, int height);
+	Texture(int32* image, int width, int height);
 	~Texture();
 	int32 Width, Height, WidthExponent;
 

@@ -33,6 +33,9 @@ void opcontrol() {
   	RenderStates::Lights[0]->Intensity = 40;
   	RenderStates::Lights[0]->DiffuseColor = Color(165, 210, 255);
 
+    Light::AmbientColor = Color(200, 200, 200);
+
+    /*
   	for (int32 x = -1, i = 1; x <= 1; x += 2)
   	{
   		for (int32 z = -1; z <= 1; z += 2, i++)
@@ -44,23 +47,25 @@ void opcontrol() {
   			RenderStates::Lights[i]->Position = Vector3f(x * 8, -.5f, z * 8 - (z < 0 ? 1.f : 0.f));
   		}
   	}
+    */
 
     Chunk chunk(Vector2f(0,0));
     chunk.fill(false);
+    RenderStates::Lights[0]->Enabled = false;
 
     while (true) {
         float time = pros::millis() - last_time;
         last_time = pros::millis();
 
-        Device::ClearBackBuffer(Color(0,0,0));
+        Device::ClearBackBuffer(Color(53,81,92));
     		Device::ClearDepthBuffer();
     		Device::ClearStencilBuffer();
 
     		RenderStates::CameraSpace = freelookManager->Update();
-    		RenderStates::Lights[0]->Enabled = true;
+
     		RenderStates::EnableStencilMask = false;
     		RenderStates::cullMode = CullMode::Back;
-    		Light::AmbientColor = Color(50, 50, 50);
+
 
     		chunk.render(RenderStates::Lights[0]);
 

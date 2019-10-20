@@ -1,8 +1,8 @@
 #include "main.h"
 #include <vector>
 
-#define CHUNK_DIAMETER 2
-#define CHUNK_HEIGHT 2
+#define CHUNK_DIAMETER 1
+#define CHUNK_HEIGHT 1
 
 #ifndef _CHUNK_H_
 #define _CHUNK_H_
@@ -18,6 +18,8 @@ public:
 
   std::vector<Cube> cubes;
   int chunk_size;
+
+  TextureSheet tex = TextureSheet("/usd/Media/textures/texture.png",16,16);
 
   void render(Light *light);
   void add_cube(struct CubePosition coordinate,bool air);
