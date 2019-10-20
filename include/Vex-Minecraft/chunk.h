@@ -1,11 +1,20 @@
 #include "main.h"
 #include <vector>
 
-#define CHUNK_DIAMETER 1
-#define CHUNK_HEIGHT 1
 
 #ifndef _CHUNK_H_
 #define _CHUNK_H_
+
+enum Direction{
+  left=0,
+  right=1,
+  bottom=2,
+  top=3,
+  front=4,
+  back=5
+};
+
+//TODO: Split these functions all up!
 
 class Chunk{
 public:
@@ -16,16 +25,32 @@ public:
 
   Vector2f chunkCoordinate;
 
-  std::vector<Cube> cubes;
+  std::vector<std::vector<std::vector<Block>>> cubes;
   int chunk_size;
+  Mesh * chunk_mesh;
 
   TextureSheet tex = TextureSheet("/usd/Media/textures/texture.png",16,16);
 
+  void generate_mesh();
+  void try_add_face_to_mesh(Vector3f block_coords, Direction direction, Block this_block);
+  bool should_add_face_to_mesh(Block adjBlock, Block block);
+  void add_face(int face, CubePosition blockpos);
+
+  int faces_showing = 0;
+  std::vector<std::vector<std::vector<float>>> meshP;
+  std::vector<std::vector<float>> meshN;
+  std::vector<std::vector<std::vector<float>>> meshU;
+  std::vector<std::vector<int>> meshI;
+
+  std::vector<int> faces;
+
+  std::vector<std::vector<int>> textures;
+
   void render(Light *light);
-  void add_cube(struct CubePosition coordinate,bool air);
+  void add_cube(struct CubePosition coordinate,int id);
   void remove_cube(struct CubePosition coordinate);
 
-  void fill(bool air = true);
+  void fill(int id);
 };
 
 #endif

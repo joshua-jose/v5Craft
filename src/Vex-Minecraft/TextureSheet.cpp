@@ -37,6 +37,7 @@ TextureSheet::TextureSheet(std::string path, int itextureWidth, int itextureHeig
       }
     }
   }
+  std::vector<unsigned char>().swap(image);
 }
 
 int32* TextureSheet::getTexture(int x, int y){

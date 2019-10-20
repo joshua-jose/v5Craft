@@ -50,7 +50,6 @@ void opcontrol() {
     */
 
     Chunk chunk(Vector2f(0,0));
-    chunk.fill(false);
     RenderStates::Lights[0]->Enabled = false;
 
     while (true) {

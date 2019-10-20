@@ -61,9 +61,12 @@
  */
 #include "FastPix3D/FastPix3D.h"
 
+#include "Vex-Minecraft/conf.h"
+
 #include "Vex-Minecraft/TextureSheet.h"
 #include "Vex-Minecraft/cubePosition.h"
 #include "Vex-Minecraft/cube.h"
+#include "Vex-Minecraft/block.h"
 #include "Vex-Minecraft/chunk.h"
 
 

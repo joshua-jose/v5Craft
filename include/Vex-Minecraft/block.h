@@ -5,9 +5,10 @@
 class Block{
 public:
   Block();
+  Block(int id, struct CubePosition icoordinate, TextureSheet tex);
+  CubePosition coordinate;
   int id;
-private:
-  Cube cube; // TODO: make this one big cube renderer for memory savings
+  int texMap[6][2];
 };
 
 #endif
