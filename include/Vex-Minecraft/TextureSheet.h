@@ -8,6 +8,7 @@ public:
   int pixelWidth, pixelHeight, textureWidth, textureHeight, TexturesX,TexturesY;
 
   std::vector<unsigned char> image;
+  std::vector<std::vector<std::vector<int32>>> texSheet;
 
   int32* getTexture(int x, int y);
 };
