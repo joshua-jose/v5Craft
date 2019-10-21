@@ -1,9 +1,12 @@
+class ChunkBuilder;
+
 #include "main.h"
 #include <vector>
 
 
 #ifndef _CHUNK_H_
 #define _CHUNK_H_
+
 
 enum Direction{
   left=0,
@@ -18,18 +21,24 @@ enum Direction{
 // TODO: Optimise, asynchronise, no render on chunk borders
 class Chunk{
 public:
-  Chunk(Vector2f ichunkCoordinate);
+  Chunk(Vector2f ichunkCoordinate, TextureSheet* itex, ChunkBuilder* icb);
   ~Chunk();
   int diameter = CHUNK_DIAMETER;
   int height = CHUNK_HEIGHT;
 
   Vector2f chunkCoordinate;
 
+  //TODO: what happens if a coordinate is negative? Need a better solution
   std::vector<std::vector<std::vector<Block>>> cubes;
   int chunk_size;
   Mesh * chunk_mesh;
+  ChunkBuilder* cb;
 
-  TextureSheet tex = TextureSheet("/usd/Media/textures/texture.png",16,16);
+  bool mesh_ready = false;
+
+  Block empty;
+
+  TextureSheet *tex;
 
   void generate_mesh();
   void try_add_face_to_mesh(Vector3f block_coords, Direction direction, Block this_block);
@@ -37,19 +46,14 @@ public:
   void add_face(int face, CubePosition blockpos);
 
   int faces_showing = 0;
-  std::vector<std::vector<std::vector<float>>> meshP;
-  std::vector<std::vector<float>> meshN;
-  std::vector<std::vector<std::vector<float>>> meshU;
-  std::vector<std::vector<int>> meshI;
-
   std::vector<int> faces;
   std::vector<CubePosition> blockpositions;
-
   std::vector<std::vector<int>> textures;
 
-  void render(Light *light);
+  void render();
   void add_cube(struct CubePosition coordinate,int id);
   void remove_cube(struct CubePosition coordinate);
+  Block* get_cube(struct CubePosition coordinate);
 
   void fill(int id);
 };

@@ -46,10 +46,8 @@ void opcontrol() {
   		}
   	}
     */
-    std::vector<Chunk> chunks;
-    for (int i = 0; i <2;i++)
-      for (int j = 0; j <2;j++)
-        chunks.push_back(Chunk(Vector2f(i,j)));
+    ChunkBuilder cb;
+    cb.buildChunks(2, 2);
 
     RenderStates::Lights[0]->Enabled = false;
 
@@ -66,8 +64,7 @@ void opcontrol() {
     		RenderStates::EnableStencilMask = false;
     		RenderStates::cullMode = CullMode::Back;
 
-        for (Chunk i:chunks)
-    		  i.render(RenderStates::Lights[0]);
+        cb.render();
 
         /*
     		RenderStates::Lights[0]->Enabled = false;

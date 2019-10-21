@@ -33,9 +33,11 @@ static const int indices[6][6] = {
     {0, 3, 1, 0, 2, 3}
 };
 
-Chunk::Chunk(Vector2f ichunkCoordinate){
+Chunk::Chunk(Vector2f ichunkCoordinate, TextureSheet* itex, ChunkBuilder* icb){
   chunkCoordinate = ichunkCoordinate;
   chunk_size = diameter*diameter*height;
+  tex = itex;
+  cb = icb;
 
   cubes.resize(diameter);
   for (int i = 0; i < diameter;i++){
@@ -49,8 +51,6 @@ Chunk::Chunk(Vector2f ichunkCoordinate){
   fill(1);
   //add_cube(CubePosition(0,0,0),1);
 
-  generate_mesh();
-
 }
 
 Chunk::~Chunk(){
@@ -59,7 +59,7 @@ Chunk::~Chunk(){
 void Chunk::add_cube(CubePosition coordinate,int id){
   //fprintf(stderr,"{%d}\n",coordinate.x + diameter * (coordinate.y + height * coordinate.z));
 
-  cubes[coordinate.z][coordinate.x][coordinate.y] = Block(id,coordinate,tex);
+  cubes[coordinate.z][coordinate.x][coordinate.y] = Block(id,coordinate,*tex);
 };
 
 void Chunk::add_face(int face, CubePosition blockpos){
@@ -89,14 +89,8 @@ struct AdjacentBlockPositions
     Vector3f back;
 };
 
-
-
 void Chunk::generate_mesh(){
   faces_showing = 0;
-  std::vector<std::vector<std::vector<float>>>().swap(meshP);
-  std::vector<std::vector<std::vector<float>>>().swap(meshU);
-  std::vector<std::vector<float>>().swap(meshN);
-  std::vector<std::vector<int>>().swap(meshI);
   std::vector<std::vector<int>>().swap(textures);
 
   std::vector<int>().swap(faces);
@@ -109,6 +103,8 @@ void Chunk::generate_mesh(){
       for (int y = 0; y < height; y++){
           abp.update(x,y,z);
           Block this_block = cubes[z][x][y];
+          if (this_block.id == 0)
+            continue;
           try_add_face_to_mesh(abp.up, Direction::top,this_block);
           try_add_face_to_mesh(abp.down, Direction::bottom,this_block);
 
@@ -130,7 +126,7 @@ void Chunk::generate_mesh(){
     {
       Subset *subset = new Subset(vertexCount, triangleCount);
 
-      subset->AppliedTexture = new Texture(tex.getTexture(textures[i][0],textures[i][1]),16,16);
+      subset->AppliedTexture = new Texture(tex->getTexture(textures[i][0],textures[i][1]),16,16);
       for (int32 a = 0; a < vertexCount; a++)
       {
         Vector3f position = Vector3f(
@@ -163,7 +159,12 @@ void Chunk::try_add_face_to_mesh(Vector3f block_coords, Direction direction, Blo
   if (block_coords.Z >= diameter || block_coords.X >= diameter || block_coords.Y >= height ||
       block_coords.Z < 0         || block_coords.X < 0         || block_coords.Y < 0){
       no_adj = true;
-      if(this_block.id != 0)
+      /*TODO: Actually get inter chunk culling working
+       *probably need to redo cube memory structures for this throughout
+       * To get acceptable performance */
+       
+      if(this_block.id != 0 /*&&
+        cb->findBlock(CubePosition(block_coords.X,block_coords.Y, block_coords.Z))->id != 0*/)
         should_add_face = true;
       }
 
@@ -185,7 +186,7 @@ bool Chunk::should_add_face_to_mesh(Block adjBlock, Block block){
   return false;
 }
 
-void Chunk::render(Light *light){
+void Chunk::render(){
 
     if(chunk_mesh){
       Matrix modelSpace = Matrix::Translate(
@@ -195,10 +196,21 @@ void Chunk::render(Light *light){
     //fprintf(stderr,"%d\n",faces_showing);
 };
 
-//TODO: implement
 void Chunk::remove_cube(CubePosition coordinate){
-  //for ()
+  add_cube(coordinate,0);
 };
+
+// Global cube position
+Block* Chunk::get_cube(struct CubePosition coordinate){
+    fprintf(stderr,"Chunk : X %d, Y:%d ; Block: X %d, Y %d, Z %d", (int)chunkCoordinate.X, (int)chunkCoordinate.Y
+    , coordinate.x,coordinate.y,coordinate.z);
+    if ((coordinate.z / (int)chunkCoordinate.Y) < diameter &&
+        (coordinate.x/ (int)chunkCoordinate.X) < diameter  &&
+        coordinate.y < height)
+    return &cubes[coordinate.z / (int)chunkCoordinate.Y][coordinate.x/ (int)chunkCoordinate.X][coordinate.y];
+
+    return &empty;
+}
 
 void Chunk::fill(int id){
   for (int x = 0; x < diameter;x++){

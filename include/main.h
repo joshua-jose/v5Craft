@@ -65,10 +65,9 @@
 
 #include "Vex-Minecraft/TextureSheet.h"
 #include "Vex-Minecraft/cubePosition.h"
-#include "Vex-Minecraft/cube.h"
 #include "Vex-Minecraft/block.h"
 #include "Vex-Minecraft/chunk.h"
-
+#include "Vex-Minecraft/ChunkBuilder.h"
 
 #ifdef __cplusplus
 extern "C" {
