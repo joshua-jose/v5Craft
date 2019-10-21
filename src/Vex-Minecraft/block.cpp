@@ -12,9 +12,8 @@ Block::Block() : coordinate(0,0,0){
 
 Block::Block(int iid, struct CubePosition icoordinate, TextureSheet tex): coordinate(icoordinate){
   id = iid;
+}
 
-
-  for (int i = 0; i<6;i++)
-    for (int j = 0; j<2;j++)
-      texMap[i][j] = TexMap[0][i][j];
+int Block::getTexture(int id, int face, int coord){
+  return TexMap[id-1][face][coord];
 }

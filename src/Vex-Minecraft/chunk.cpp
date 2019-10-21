@@ -38,18 +38,13 @@ Chunk::Chunk(Vector2f ichunkCoordinate, TextureSheet* itex, ChunkBuilder* icb){
   chunk_size = diameter*diameter*height;
   tex = itex;
   cb = icb;
-
-  cubes.resize(diameter);
-  for (int i = 0; i < diameter;i++){
-    cubes[i].resize(diameter);
-    for (int j = 0; j < diameter;j++){
-      cubes[i][j].resize(height);
-    }
-  }
   //cubes = (Cube*) malloc(chunk_size*sizeof(Cube));
 
-  fill(1);
-  //add_cube(CubePosition(0,0,0),1);
+  //fill(0);
+  for (int x = 0; x < 4;x++)
+    for (int y = 0; y < 3;y++)
+      for (int z = 0; z < 4;z++)
+        add_cube(CubePosition(x,y,z),1);
 
 }
 
@@ -59,7 +54,7 @@ Chunk::~Chunk(){
 void Chunk::add_cube(CubePosition coordinate,int id){
   //fprintf(stderr,"{%d}\n",coordinate.x + diameter * (coordinate.y + height * coordinate.z));
 
-  cubes[coordinate.z][coordinate.x][coordinate.y] = Block(id,coordinate,*tex);
+  cubes[to_index(coordinate)] = Block(id,coordinate,*tex);
 };
 
 void Chunk::add_face(int face, CubePosition blockpos){
@@ -102,7 +97,7 @@ void Chunk::generate_mesh(){
     for (int x = 0; x < diameter; x++){
       for (int y = 0; y < height; y++){
           abp.update(x,y,z);
-          Block this_block = cubes[z][x][y];
+          Block this_block = cubes[to_index(x,y,z)];
           if (this_block.id == 0)
             continue;
           try_add_face_to_mesh(abp.up, Direction::top,this_block);
@@ -162,22 +157,22 @@ void Chunk::try_add_face_to_mesh(Vector3f block_coords, Direction direction, Blo
       /*TODO: Actually get inter chunk culling working
        *probably need to redo cube memory structures for this throughout
        * To get acceptable performance */
-       
+
       if(this_block.id != 0 /*&&
         cb->findBlock(CubePosition(block_coords.X,block_coords.Y, block_coords.Z))->id != 0*/)
         should_add_face = true;
       }
 
   if (!should_add_face && !no_adj){
-    Block adjBlock = cubes[block_coords.Z][block_coords.X][block_coords.Y];
+    Block adjBlock = cubes[to_index(block_coords.X,block_coords.Y,block_coords.Z)];
     should_add_face = should_add_face_to_mesh(adjBlock, this_block);
   }
 
   if (should_add_face){
     add_face((int)direction, CubePosition(this_block.coordinate.x, this_block.coordinate.y, this_block.coordinate.z));
     std::vector<int> texture(2);
-    texture[0] = this_block.texMap[(int)direction][0];
-    texture[1] = this_block.texMap[(int)direction][1];
+    texture[0] = Block::getTexture(this_block.id,(int)direction,0);
+    texture[1] = Block::getTexture(this_block.id,(int)direction,1);
     textures.push_back(texture);
   }
 }
@@ -200,6 +195,13 @@ void Chunk::remove_cube(CubePosition coordinate){
   add_cube(coordinate,0);
 };
 
+int Chunk::to_index(CubePosition coordinate){
+  return coordinate.x + diameter * (coordinate.y + height * coordinate.z);
+}
+int Chunk::to_index(int x, int y, int z){
+  return x + diameter * (y + height * z);
+}
+
 // Global cube position
 Block* Chunk::get_cube(struct CubePosition coordinate){
     fprintf(stderr,"Chunk : X %d, Y:%d ; Block: X %d, Y %d, Z %d", (int)chunkCoordinate.X, (int)chunkCoordinate.Y
@@ -207,7 +209,7 @@ Block* Chunk::get_cube(struct CubePosition coordinate){
     if ((coordinate.z / (int)chunkCoordinate.Y) < diameter &&
         (coordinate.x/ (int)chunkCoordinate.X) < diameter  &&
         coordinate.y < height)
-    return &cubes[coordinate.z / (int)chunkCoordinate.Y][coordinate.x/ (int)chunkCoordinate.X][coordinate.y];
+    return &cubes[to_index(coordinate.x/ (int)chunkCoordinate.X,coordinate.y,coordinate.z / (int)chunkCoordinate.Y)];
 
     return &empty;
 }

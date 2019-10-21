@@ -47,7 +47,7 @@ void opcontrol() {
   	}
     */
     ChunkBuilder cb;
-    cb.buildChunks(2, 2);
+    cb.buildChunks(4,4);
 
     RenderStates::Lights[0]->Enabled = false;
 

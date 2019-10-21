@@ -29,7 +29,7 @@ public:
   Vector2f chunkCoordinate;
 
   //TODO: what happens if a coordinate is negative? Need a better solution
-  std::vector<std::vector<std::vector<Block>>> cubes;
+  std::array<Block,CHUNK_HEIGHT*CHUNK_DIAMETER*CHUNK_DIAMETER> cubes;
   int chunk_size;
   Mesh * chunk_mesh;
   ChunkBuilder* cb;
@@ -49,6 +49,9 @@ public:
   std::vector<int> faces;
   std::vector<CubePosition> blockpositions;
   std::vector<std::vector<int>> textures;
+
+  int to_index(CubePosition coordinate);
+  int to_index(int x, int y, int z);
 
   void render();
   void add_cube(struct CubePosition coordinate,int id);
