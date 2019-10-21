@@ -15,7 +15,7 @@ enum Direction{
 };
 
 //TODO: Split these functions all up!
-
+// TODO: Optimise, asynchronise, no render on chunk borders
 class Chunk{
 public:
   Chunk(Vector2f ichunkCoordinate);

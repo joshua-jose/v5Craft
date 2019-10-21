@@ -21,8 +21,6 @@ void opcontrol() {
     //FPSCounter* fpsCounter = new FPSCounter(20);
     FreelookManager *freelookManager = new FreelookManager();
 
-    Font* font = new Font("/usd/Media/Fonts/16x16.png");
-
     RenderStates::CameraSpace = Matrix::RotateY(-30) * Matrix::RotateX(-20) * Matrix::Translate(Vector3f(0, 0, 20));
     int last_time = pros::millis();
     pros::delay(20);
@@ -48,8 +46,11 @@ void opcontrol() {
   		}
   	}
     */
+    std::vector<Chunk> chunks;
+    for (int i = 0; i <2;i++)
+      for (int j = 0; j <2;j++)
+        chunks.push_back(Chunk(Vector2f(i,j)));
 
-    Chunk chunk(Vector2f(0,0));
     RenderStates::Lights[0]->Enabled = false;
 
     while (true) {
@@ -65,8 +66,8 @@ void opcontrol() {
     		RenderStates::EnableStencilMask = false;
     		RenderStates::cullMode = CullMode::Back;
 
-
-    		chunk.render(RenderStates::Lights[0]);
+        for (Chunk i:chunks)
+    		  i.render(RenderStates::Lights[0]);
 
         /*
     		RenderStates::Lights[0]->Enabled = false;

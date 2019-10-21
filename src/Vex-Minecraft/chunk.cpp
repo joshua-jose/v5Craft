@@ -63,33 +63,6 @@ void Chunk::add_cube(CubePosition coordinate,int id){
 };
 
 void Chunk::add_face(int face, CubePosition blockpos){
-
-              // 2D vectors in C++ ugh
-              /*
-              std::vector<std::vector<float> > pos{
-                  {positions[face][0][0] + blockpos.x,positions[face][0][1] + blockpos.y,positions[face][0][2] + blockpos.z},
-                  {positions[face][1][0] + blockpos.x,positions[face][1][1] + blockpos.y,positions[face][1][2] + blockpos.z},
-                  {positions[face][2][0] + blockpos.x,positions[face][2][1] + blockpos.y,positions[face][2][2] + blockpos.z},
-                  {positions[face][3][0] + blockpos.x,positions[face][3][1] + blockpos.y,positions[face][3][2] + blockpos.z}};
-
-
-              std::vector<float> norms = {normals[face][0],normals[face][1],normals[face][2]};
-
-              std::vector<std::vector<float> > Uv{
-                  {uvs[face][0][0],uvs[face][0][1]},
-                  {uvs[face][1][0],uvs[face][1][1]},
-                  {uvs[face][2][0],uvs[face][2][1]},
-                  {uvs[face][3][0],uvs[face][3][1]}};
-
-              std::vector<int> ind = {indices[face][0],indices[face][1],indices[face][2]};
-
-
-
-              meshN.push_back(norms);
-              meshU.push_back(Uv);
-              meshI.push_back(ind);
-              */
-              //meshP.push_back(pos);
               blockpositions.push_back(blockpos);
               faces.push_back(face);
               faces_showing += 1;
@@ -133,7 +106,7 @@ void Chunk::generate_mesh(){
 
   for (int z = 0; z < diameter; z++){
     for (int x = 0; x < diameter; x++){
-      for (int y = 0; y < diameter; y++){
+      for (int y = 0; y < height; y++){
           abp.update(x,y,z);
           Block this_block = cubes[z][x][y];
           try_add_face_to_mesh(abp.up, Direction::top,this_block);
@@ -161,9 +134,9 @@ void Chunk::generate_mesh(){
       for (int32 a = 0; a < vertexCount; a++)
       {
         Vector3f position = Vector3f(
-          ((chunkCoordinate.X * diameter) + blockpositions[i].x)*2 + positions[faces[i]][a][0],
+          (chunkCoordinate.X * diameter) + (blockpositions[i].x*2) + positions[faces[i]][a][0],
           (blockpositions[i].y*2) + positions[faces[i]][a][1],
-          ((chunkCoordinate.Y * diameter) + (blockpositions[i].z))*2 + positions[faces[i]][a][2]);
+          (chunkCoordinate.Y * diameter) + (blockpositions[i].z*2) + positions[faces[i]][a][2]);
 
         Vector3f normal= Vector3f(normals[faces[i]][0],normals[faces[i]][1],normals[faces[i]][2]);
         Vector2f UVs = Vector2f(uvs[faces[i]][a][0],uvs[faces[i]][a][1]);
@@ -214,15 +187,15 @@ bool Chunk::should_add_face_to_mesh(Block adjBlock, Block block){
 
 void Chunk::render(Light *light){
 
-
-    Matrix modelSpace = Matrix::Translate(
-      Vector3f(chunkCoordinate.X*1.9 * diameter,0,chunkCoordinate.Y*1.9*diameter)) * Matrix::RotateX(180);
-
-
-    chunk_mesh->Draw(modelSpace);
+    if(chunk_mesh){
+      Matrix modelSpace = Matrix::Translate(
+        Vector3f(chunkCoordinate.X * diameter,0,chunkCoordinate.Y*diameter)) * Matrix::RotateX(180);
+      chunk_mesh->Draw(modelSpace);
+    }
     //fprintf(stderr,"%d\n",faces_showing);
 };
 
+//TODO: implement
 void Chunk::remove_cube(CubePosition coordinate){
   //for ()
 };
