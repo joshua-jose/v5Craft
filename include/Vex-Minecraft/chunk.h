@@ -43,6 +43,7 @@ public:
   std::vector<std::vector<int>> meshI;
 
   std::vector<int> faces;
+  std::vector<CubePosition> blockpositions;
 
   std::vector<std::vector<int>> textures;
 
