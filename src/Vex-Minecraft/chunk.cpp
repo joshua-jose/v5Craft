@@ -17,13 +17,13 @@ static const float normals[6][3] = {
     {0, 0, +1}
 };
 static const float uvs[6][4][2] = {
-    {{0, 0}, {1, 0}, {0, 1}, {1, 1}},
-    {{1, 0}, {0, 0}, {1, 1}, {0, 1}},
-    {{0, 1}, {0, 0}, {1, 1}, {1, 0}},
-    {{0, 0}, {0, 1}, {1, 0}, {1, 1}},
-    {{0, 0}, {0, 1}, {1, 0}, {1, 1}},
-    {{1, 0}, {1, 1}, {0, 0}, {0, 1}}
-};
+  {{0, 0}, {-1, 0}, {0, -1}, {-1, -1}},
+  {{-1, 0}, {0, 0}, {-1, -1}, {0, -1}},
+  {{0, -1}, {0, 0}, {-1, -1}, {-1, 0}},
+  {{0, 0}, {0, -1}, {-1, 0}, {-1, -1}},
+  {{0, 0}, {0, -1}, {-1, 0}, {-1, -1}},
+  {{-1, 0}, {-1, -1}, {0, 0}, {0, -1}}};
+
 static const int indices[6][6] = {
     {0, 3, 2, 0, 1, 3},
     {0, 3, 1, 0, 2, 3},
@@ -41,13 +41,17 @@ Chunk::Chunk(Vector2f ichunkCoordinate, TextureSheet* itex, ChunkBuilder* icb){
   cb = icb;
   //cubes = (Cube*) malloc(chunk_size*sizeof(Cube));
 
-  fill(1);
-  /*
+  //fill(1);
+
   for (int x = 0; x < 4;x++)
-    for (int y = 0; y < 3;y++)
-      for (int z = 0; z < 4;z++)
-        add_cube(CubePosition(x,y,z),2);
-  */
+    for (int y = 0; y < 8;y++)
+      for (int z = 0; z < 4;z++){
+        if (x > y && x > z) add_cube(CubePosition(x,y,z),0);
+        else if (y > x && y > z) add_cube(CubePosition(x,y,z),1);
+        else add_cube(CubePosition(x,y,z),2);
+        }
+
+
 
 }
 
@@ -182,7 +186,7 @@ void Chunk::render(){
 
     if(chunk_mesh){
       Matrix modelSpace = Matrix::Translate(
-        Vector3f(chunkCoordinate.X * diameter,0,chunkCoordinate.Y*diameter)) * Matrix::RotateX(180);
+        Vector3f(chunkCoordinate.X * diameter,0,chunkCoordinate.Y*diameter)) /** Matrix::RotateX(180)*/;
       chunk_mesh->Draw(modelSpace);
     }
     //fprintf(stderr,"%d\n",faces_showing);
