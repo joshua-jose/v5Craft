@@ -17,6 +17,26 @@ enum Direction{
   back=5
 };
 
+struct AdjacentBlockPositions
+{
+    void update(int x, int y, int z)
+    {
+        up     =   Vector3f(x,     y - 1,  z    );
+        down   =   Vector3f(x,     y + 1,  z    );
+        left   =   Vector3f(x - 1, y,      z    );
+        right  =   Vector3f(x + 1, y,      z    );
+        front  =   Vector3f(x,     y,      z - 1);
+        back   =   Vector3f(x,     y,      z + 1);
+    }
+
+    Vector3f up;
+    Vector3f down;
+    Vector3f left;
+    Vector3f right;
+    Vector3f front;
+    Vector3f back;
+};
+
 //TODO: Split these functions all up!
 // TODO: Optimise, asynchronise, no render on chunk borders
 class Chunk{
@@ -49,6 +69,7 @@ public:
   std::vector<int> faces;
   std::vector<CubePosition> blockpositions;
   std::vector<std::vector<int>> textures;
+  std::map<Direction,Chunk*> adjacentChunks;
 
   int to_index(CubePosition coordinate);
   int to_index(int x, int y, int z);

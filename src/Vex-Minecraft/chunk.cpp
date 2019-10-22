@@ -35,16 +35,19 @@ static const int indices[6][6] = {
 
 Chunk::Chunk(Vector2f ichunkCoordinate, TextureSheet* itex, ChunkBuilder* icb){
   chunkCoordinate = ichunkCoordinate;
+
   chunk_size = diameter*diameter*height;
   tex = itex;
   cb = icb;
   //cubes = (Cube*) malloc(chunk_size*sizeof(Cube));
 
-  //fill(0);
+  fill(1);
+  /*
   for (int x = 0; x < 4;x++)
     for (int y = 0; y < 3;y++)
       for (int z = 0; z < 4;z++)
-        add_cube(CubePosition(x,y,z),1);
+        add_cube(CubePosition(x,y,z),2);
+  */
 
 }
 
@@ -53,7 +56,6 @@ Chunk::~Chunk(){
 
 void Chunk::add_cube(CubePosition coordinate,int id){
   //fprintf(stderr,"{%d}\n",coordinate.x + diameter * (coordinate.y + height * coordinate.z));
-
   cubes[to_index(coordinate)] = Block(id,coordinate,*tex);
 };
 
@@ -64,25 +66,6 @@ void Chunk::add_face(int face, CubePosition blockpos){
 
 };
 
-struct AdjacentBlockPositions
-{
-    void update(int x, int y, int z)
-    {
-        up     =   Vector3f(x,     y - 1,  z    );
-        down   =   Vector3f(x,     y + 1,  z    );
-        left   =   Vector3f(x - 1, y,      z    );
-        right  =   Vector3f(x + 1, y,      z    );
-        front  =   Vector3f(x,     y,      z - 1);
-        back   =   Vector3f(x,     y,      z + 1);
-    }
-
-    Vector3f up;
-    Vector3f down;
-    Vector3f left;
-    Vector3f right;
-    Vector3f front;
-    Vector3f back;
-};
 
 void Chunk::generate_mesh(){
   faces_showing = 0;
@@ -91,15 +74,17 @@ void Chunk::generate_mesh(){
   std::vector<int>().swap(faces);
   std::vector<CubePosition>().swap(blockpositions);
 
+  adjacentChunks = cb->getAdjacentChunks(this);
+
   AdjacentBlockPositions abp;
 
   for (int z = 0; z < diameter; z++){
     for (int x = 0; x < diameter; x++){
       for (int y = 0; y < height; y++){
-          abp.update(x,y,z);
           Block this_block = cubes[to_index(x,y,z)];
           if (this_block.id == 0)
             continue;
+          abp.update(x,y,z);
           try_add_face_to_mesh(abp.up, Direction::top,this_block);
           try_add_face_to_mesh(abp.down, Direction::bottom,this_block);
 
@@ -151,6 +136,7 @@ void Chunk::try_add_face_to_mesh(Vector3f block_coords, Direction direction, Blo
 
   bool should_add_face = false;
   bool no_adj = false;
+  if (this_block.id == 0) return;
   if (block_coords.Z >= diameter || block_coords.X >= diameter || block_coords.Y >= height ||
       block_coords.Z < 0         || block_coords.X < 0         || block_coords.Y < 0){
       no_adj = true;
@@ -158,10 +144,21 @@ void Chunk::try_add_face_to_mesh(Vector3f block_coords, Direction direction, Blo
        *probably need to redo cube memory structures for this throughout
        * To get acceptable performance */
 
-      if(this_block.id != 0 /*&&
-        cb->findBlock(CubePosition(block_coords.X,block_coords.Y, block_coords.Z))->id != 0*/)
-        should_add_face = true;
+      if(this_block.id != 0){
+        auto adjChunk= adjacentChunks.find(direction);
+        if (adjChunk != adjacentChunks.end()) {
+          int globX = block_coords.X+ (diameter*static_cast<int>(chunkCoordinate.X));
+          int globZ = block_coords.Z+ (diameter*static_cast<int>(chunkCoordinate.Y));
+          if (adjChunk->second->get_cube(CubePosition(globX,static_cast<int>(block_coords.Y),globZ))->id == 0){
+              should_add_face = true;
+              fprintf(stderr,"Chunk X: %d, Chunk Y: %d, Block X: %d, Block Y: %d, Block Z: %d, direction: %d;\n",
+              static_cast<int>(chunkCoordinate.X),static_cast<int>(chunkCoordinate.Y),
+              globX,static_cast<int>(block_coords.Y),globZ, direction);
+            }
+          }
+        else should_add_face = true;
       }
+    }
 
   if (!should_add_face && !no_adj){
     Block adjBlock = cubes[to_index(block_coords.X,block_coords.Y,block_coords.Z)];
@@ -204,12 +201,23 @@ int Chunk::to_index(int x, int y, int z){
 
 // Global cube position
 Block* Chunk::get_cube(struct CubePosition coordinate){
-    fprintf(stderr,"Chunk : X %d, Y:%d ; Block: X %d, Y %d, Z %d", (int)chunkCoordinate.X, (int)chunkCoordinate.Y
-    , coordinate.x,coordinate.y,coordinate.z);
-    if ((coordinate.z / (int)chunkCoordinate.Y) < diameter &&
-        (coordinate.x/ (int)chunkCoordinate.X) < diameter  &&
-        coordinate.y < height)
-    return &cubes[to_index(coordinate.x/ (int)chunkCoordinate.X,coordinate.y,coordinate.z / (int)chunkCoordinate.Y)];
+
+    int localX = coordinate.x- (diameter*static_cast<int>(chunkCoordinate.X));
+    int localZ = coordinate.z- (diameter*static_cast<int>(chunkCoordinate.Y));
+
+    if (localZ < diameter && localX < diameter  && coordinate.y < height &&
+        localZ >= 0 && localX >= 0 && coordinate.y >= 0){
+
+          return &cubes[to_index(
+          localX,
+          coordinate.y,
+          localZ)];
+    }
+    /*
+    fprintf(stderr,"Chunk X: %d, Chunk Y: %d, Block X: %d, Block Y: %d, Block Z: %d;\n",
+    static_cast<int>(chunkCoordinate.X),static_cast<int>(chunkCoordinate.Y),
+    coordinate.x,coordinate.y,coordinate.z);
+    */
 
     return &empty;
 }

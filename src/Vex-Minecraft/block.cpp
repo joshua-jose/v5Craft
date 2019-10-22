@@ -2,7 +2,8 @@
 
 static const int TexMap[BLOCK_COUNT][6][2] = {
   // Left,Right, bottom, top,  front, back
-  {{0,14},{0,14},{0,15},{0,13},{0,14},{0,14}} // Grass
+  {{0,14},{0,14},{0,15},{0,13},{0,14},{0,14}}, // Grass
+  {{4,15},{4,15},{4,15},{4,15},{4,15},{4,15}}
 };
 
 Block::Block() : coordinate(0,0,0){
