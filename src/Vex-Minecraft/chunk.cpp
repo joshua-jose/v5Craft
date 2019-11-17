@@ -46,9 +46,8 @@ Chunk::Chunk(Vector2f ichunkCoordinate, TextureSheet* itex, ChunkBuilder* icb){
   for (int x = 0; x < 4;x++)
     for (int y = 0; y < 8;y++)
       for (int z = 0; z < 4;z++){
-        if (x > y && x > z) add_cube(CubePosition(x,y,z),0);
-        else if (y > x && y > z) add_cube(CubePosition(x,y,z),1);
-        else add_cube(CubePosition(x,y,z),2);
+        if (x < y) add_cube(CubePosition(x,y,z),0);
+        else  add_cube(CubePosition(x,y,z),1);
         }
 
 
@@ -155,9 +154,6 @@ void Chunk::try_add_face_to_mesh(Vector3f block_coords, Direction direction, Blo
           int globZ = block_coords.Z+ (diameter*static_cast<int>(chunkCoordinate.Y));
           if (adjChunk->second->get_cube(CubePosition(globX,static_cast<int>(block_coords.Y),globZ))->id == 0){
               should_add_face = true;
-              fprintf(stderr,"Chunk X: %d, Chunk Y: %d, Block X: %d, Block Y: %d, Block Z: %d, direction: %d;\n",
-              static_cast<int>(chunkCoordinate.X),static_cast<int>(chunkCoordinate.Y),
-              globX,static_cast<int>(block_coords.Y),globZ, direction);
             }
           }
         else should_add_face = true;

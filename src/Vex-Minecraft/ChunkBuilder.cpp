@@ -2,15 +2,17 @@
 
 void ChunkBuilder::buildChunks(int xlength, int ylength){
   xlen = xlength, ylen = ylength;
-  for (int i = 0; i <xlength;i++)
+  for (int i = 0; i <xlength;i++){
     for (int j = 0; j <ylength;j++){
       Chunk c = Chunk(Vector2f(i,j),&tex, this);
       chunks.push_back(c);
     }
-    for (int i = 0; i <xlength;i++)
-      for (int j = 0; j <ylength;j++){
-        chunks[(i *(ylen)) + j].generate_mesh();
-      }
+  }
+  for (int i = 0; i <xlength;i++){
+    for (int j = 0; j <ylength;j++){
+      chunks[(i *(ylen)) + j].generate_mesh();
+    }
+  }
 
 }
 

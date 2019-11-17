@@ -24,7 +24,7 @@ class ChunkBuilder{
 
   int xlen, ylen;
 
-  TextureSheet tex = TextureSheet("/usd/Media/textures/texture.png",16,16);
+  TextureSheet tex = TextureSheet("Media/textures/texture.png",16,16);
 public:
   void buildChunks(int xlength, int ylength);
   Block* findBlock(CubePosition pos);
