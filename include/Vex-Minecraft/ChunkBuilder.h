@@ -23,8 +23,11 @@ class ChunkBuilder{
   std::vector<Block> ghost_blocks;
 
   int xlen, ylen;
-
+#ifdef THREADS_STD
   TextureSheet tex = TextureSheet("Media/textures/texture.png",16,16);
+#else
+  TextureSheet tex = TextureSheet("/usd/Media/textures/texture.png",16,16);
+#endif
 public:
   void buildChunks(int xlength, int ylength);
   Block* findBlock(CubePosition pos);
