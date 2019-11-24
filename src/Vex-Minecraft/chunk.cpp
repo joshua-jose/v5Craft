@@ -41,15 +41,7 @@ Chunk::Chunk(Vector2f ichunkCoordinate, TextureSheet* itex, ChunkBuilder* icb){
   cb = icb;
   //cubes = (Cube*) malloc(chunk_size*sizeof(Cube));
 
-  //fill(1);
-
-  for (int x = 0; x < 4;x++)
-    for (int y = 0; y < 8;y++)
-      for (int z = 0; z < 4;z++){
-        if (x < y) add_cube(CubePosition(x,y,z),0);
-        else  add_cube(CubePosition(x,y,z),1);
-        }
-
+  fill(1);
 
 
 }
@@ -189,7 +181,17 @@ void Chunk::render(){
 };
 
 void Chunk::remove_cube(CubePosition coordinate){
-  add_cube(coordinate,0);
+
+  int localX = coordinate.x- (diameter*static_cast<int>(chunkCoordinate.X));
+  int localZ = coordinate.z- (diameter*static_cast<int>(chunkCoordinate.Y));
+
+  if (localZ < diameter && localX < diameter  && coordinate.y < height &&
+      localZ >= 0 && localX >= 0 && coordinate.y >= 0){
+        add_cube(CubePosition(localX,
+        coordinate.y,
+        localZ),0);
+  }
+
 };
 
 int Chunk::to_index(CubePosition coordinate){

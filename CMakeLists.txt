@@ -17,6 +17,8 @@ add_executable(v5Craft
 	src/Vex-Minecraft/TextureSheet.cpp
 	src/Vex-Minecraft/block.cpp
 	src/Vex-Minecraft/chunk.cpp
-	src/Vex-Minecraft/cubePosition.cpp)
+	src/Vex-Minecraft/cubePosition.cpp
+	src/Vex-Minecraft/Player.cpp
+	src/Vex-Minecraft/Ray.cpp)
 
 target_link_libraries(v5Craft V5render)

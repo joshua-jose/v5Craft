@@ -37,15 +37,44 @@ std::map<Direction,Chunk*> ChunkBuilder::getAdjacentChunks(Chunk* centre){
 };
 
 Block* ChunkBuilder::findBlock(CubePosition pos){
-    if (pos.x > 0 && pos.y > 0 && pos.z > 0 && pos.y < CHUNK_HEIGHT){
+    if (pos.x >= 0 && pos.y >= 0 && pos.z >= 0 && pos.y < CHUNK_HEIGHT){
       int chunkX = pos.x / CHUNK_DIAMETER, chunkY = pos.z / CHUNK_DIAMETER;
+      if (chunkX < xlen && chunkY < ylen && chunkX >= 0 && chunkY >= 0)
         return chunks[(chunkX *(ylen)) + chunkY].get_cube(pos);
-
-
     }
-    Block b = Block(0, pos, tex);
-    ghost_blocks.push_back(b);
+    ghost_blocks.emplace_back(0, pos, tex);
+    //printf("Get ghosted fam %d\n", ghost_blocks.back().id);
     return &ghost_blocks.back();
+}
+
+Block* ChunkBuilder::findBlockSafe(CubePosition pos){
+    if (pos.x >= 0 && pos.y >= 0 && pos.z >= 0 && pos.y < CHUNK_HEIGHT){
+      int chunkX = pos.x / CHUNK_DIAMETER, chunkY = pos.z / CHUNK_DIAMETER;
+      if (chunkX < xlen && chunkY < ylen && chunkX >= 0 && chunkY >= 0)
+        return chunks[(chunkX *(ylen)) + chunkY].get_cube(pos);
+    }
+    return nullptr;
+}
+
+void ChunkBuilder::breakBlock(CubePosition pos){
+  int chunk_index = index_from_cubepos(pos);
+  if (chunk_index != -1){
+    chunks[chunk_index].remove_cube(pos);
+    for (std::pair<Direction,Chunk*> i: getAdjacentChunks(&chunks[chunk_index])){
+      i.second->generate_mesh();
+    }
+    chunks[chunk_index].generate_mesh();
+  }
+
+};
+
+int ChunkBuilder::index_from_cubepos(CubePosition pos){
+  if (pos.x >= 0 && pos.y >= 0 && pos.z >= 0 && pos.y < CHUNK_HEIGHT){
+    int chunkX = pos.x / CHUNK_DIAMETER, chunkY = pos.z / CHUNK_DIAMETER;
+    if (chunkX < xlen && chunkY < ylen && chunkX >= 0 && chunkY >= 0)
+      return (chunkX *(ylen)) + chunkY;
+  }
+  return -1;
 }
 
 void ChunkBuilder::render(){

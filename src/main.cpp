@@ -6,20 +6,16 @@
 // When switching between PC and V5, the delays need to be commented out/ uncommented out.
 // Thank you cmake/mingw for just not working
 
-FreelookManager *freelookManager;
 ChunkBuilder *cb;
 bool programrunning;
 int last_time;
+Player *player;
 
 void initialize() {
     //pros::delay(100);
     fprintf(stderr,"init\n");
     Device::Initialize(LV_HOR_RES, LV_VER_RES);
 
-    RenderStates::ClipNear = 1.0f;
-    RenderStates::Zoom = 2;
-    freelookManager = new FreelookManager();
-    RenderStates::CameraSpace = Matrix::RotateY(-30) * Matrix::RotateX(-20) * Matrix::Translate(Vector3f(0, 0, 20));
     //int last_time = pros::millis();
     RenderStates::Lights[0]->Enabled = true;
   	RenderStates::Lights[0]->Type = LightType::Spot;
@@ -28,25 +24,26 @@ void initialize() {
 
     Light::AmbientColor = Color(200, 200, 200);
     cb = new ChunkBuilder();
-    cb->buildChunks(1,1);
+    cb->buildChunks(2,2);
     RenderStates::Lights[0]->Enabled = false;
+    RenderStates::EnableStencilMask = false;
+    RenderStates::cullMode = CullMode::Back;
+
+    player = new Player;
+
     programrunning = true;
 }
 
 void run_game(){
-    Device::ClearBackBuffer(Color(75,125,110));
+    Device::ClearBackBuffer(Color(13,195,219));
     Device::ClearDepthBuffer();
     Device::ClearStencilBuffer();
 
-    RenderStates::CameraSpace = freelookManager->Update();
-    RenderStates::EnableStencilMask = false;
-    RenderStates::cullMode = CullMode::Back;
-
-    cb->render();
-    Device::Present();
-
     Input::Update(5);
 
+    player->update(cb);
+    cb->render();
+    Device::Present();
 }
 
 void opcontrol() {

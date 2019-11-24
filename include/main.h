@@ -64,11 +64,14 @@
 
 #include "Vex-Minecraft/conf.h"
 
+#include "Vex-Minecraft/ray.h"
+
 #include "Vex-Minecraft/TextureSheet.h"
 #include "Vex-Minecraft/cubePosition.h"
 #include "Vex-Minecraft/block.h"
 #include "Vex-Minecraft/chunk.h"
 #include "Vex-Minecraft/ChunkBuilder.h"
+#include "Vex-Minecraft/Player.h"
 
 #ifdef __cplusplus
 extern "C" {
