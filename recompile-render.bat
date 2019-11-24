@@ -1,4 +1,4 @@
-cd ..\vexV5-rendering
+cd ..\V5Render
 prosv5 make template
 cp V5render@1.0.0.zip ../v5Craft
 cd ../v5Craft

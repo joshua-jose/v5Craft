@@ -1,5 +1,7 @@
 #include "main.h"
 
+bool last_l1 = false;
+
 Player::Player(){
   RenderStates::ClipNear = 1.0f;
   RenderStates::Zoom = 2;
@@ -15,7 +17,8 @@ void Player::update(ChunkBuilder *cb){
   position.Z = -flm.getPosition().Z / 2;
 
   rotation = flm.getRotation();
-  if(Input::getKeyDown(DIGITAL_R1)){
+  if(Input::getKeyDown(DIGITAL_L1) && !last_l1){
+
     printf("raying\n");
     //printf("x: %f, y: %f, z: %f\n",position.X,position.Y,position.Z);
     Ray r(position, rotation);
@@ -35,6 +38,7 @@ void Player::update(ChunkBuilder *cb){
       r.step(0.1);
 
     }
-  }
+  };
+  last_l1 = Input::getKeyDown(DIGITAL_L1);
   //printf("X: %f Y: %f Z: %f\n",position.X,position.Y,position.Z);
 }

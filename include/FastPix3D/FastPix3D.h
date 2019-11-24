@@ -1,12 +1,6 @@
 #ifndef _FASTPIX3D_H_
 #define _FASTPIX3D_H_
 
-#ifdef FASTPIX3D_EXPORTS
-#define  __declspec(dllexport)
-#else
-#define  __declspec(dllimport)
-#endif
-
 #include <cstdint>
 
 typedef int8_t sbyte;
