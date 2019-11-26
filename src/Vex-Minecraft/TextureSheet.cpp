@@ -44,6 +44,5 @@ int32* TextureSheet::getTexture(int x, int y){
 
   if (x > TexturesX || y > TexturesY)
     throw std::invalid_argument("x or y is greater than amount of textures!");
-
   return texSheet[y][x].data();
 };

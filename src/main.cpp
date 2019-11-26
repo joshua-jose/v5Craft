@@ -10,6 +10,7 @@ ChunkBuilder *cb;
 bool programrunning;
 int last_time;
 Player *player;
+Skybox *skybox;
 
 void initialize() {
     //pros::delay(100);
@@ -30,6 +31,7 @@ void initialize() {
     RenderStates::cullMode = CullMode::Back;
 
     player = new Player;
+    skybox = new Skybox;
 
     programrunning = true;
 }
@@ -40,7 +42,8 @@ void run_game(){
     Device::ClearStencilBuffer();
 
     Input::Update(5);
-
+    
+    skybox->render();
     player->update(cb);
     cb->render();
     Device::Present();

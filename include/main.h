@@ -72,6 +72,7 @@
 #include "Vex-Minecraft/chunk.h"
 #include "Vex-Minecraft/ChunkBuilder.h"
 #include "Vex-Minecraft/Player.h"
+#include  "Vex-Minecraft/Skybox.h"
 
 #ifdef __cplusplus
 extern "C" {

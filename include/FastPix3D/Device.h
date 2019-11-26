@@ -7,12 +7,7 @@ private:
 	static int32 *BackBuffer;
 	static int16 *DepthBuffer;
 	static sbyte *StencilBuffer;
-	
-#ifdef THREADS_STD
-	static SDL_Window *Window;
-	static SDL_Renderer *Renderer;
-	static SDL_Texture *ScreenTexture;
-#endif
+
 public:
 	static void Initialize(int32 width, int32 height);
 	static void Destroy();

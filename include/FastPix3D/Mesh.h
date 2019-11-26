@@ -17,5 +17,6 @@ public:
 	Subset* getSubset(int32 index);
 
 	void Draw(Matrix modelSpace);
+	void Draw();
 	void TransformVertices(Matrix matrix);
 };

@@ -19,6 +19,7 @@ add_executable(v5Craft
 	src/Vex-Minecraft/chunk.cpp
 	src/Vex-Minecraft/cubePosition.cpp
 	src/Vex-Minecraft/Player.cpp
-	src/Vex-Minecraft/Ray.cpp)
+	src/Vex-Minecraft/Ray.cpp
+	src/Vex-Minecraft/Skybox.cpp)
 
 target_link_libraries(v5Craft V5render)

@@ -1,11 +1,11 @@
 struct  Matrix
 {
 private:
-	float Values[16], ValuesRotation[16];
 
-	void ResetRotation();
 	void UpdateRotation();
 public:
+	float Values[16], ValuesRotation[16];
+
 	static Matrix Identity();
 	static Matrix Scale(Vector3f size);
 	static Matrix RotateX(float angle);
@@ -20,4 +20,6 @@ public:
 
 	Matrix operator *(Matrix matrix);
 	Vector3f operator *(Vector3f vector);
+
+	void ResetRotation();
 };
