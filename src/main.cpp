@@ -42,8 +42,13 @@ void run_game(){
     Device::ClearStencilBuffer();
 
     Input::Update(5);
-    
+	
+    RenderStates::EnableZWrites = false;
+	RenderStates::ClipNear = 10;
     skybox->render();
+	RenderStates::EnableZWrites = true;
+	RenderStates::ClipNear = 0.5f;
+	
     player->update(cb);
     cb->render();
     Device::Present();
