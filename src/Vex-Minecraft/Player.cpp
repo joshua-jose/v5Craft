@@ -23,7 +23,7 @@ void Player::update(ChunkBuilder *cb){
     //printf("x: %f, y: %f, z: %f\n",position.X,position.Y,position.Z);
     Ray r(position, rotation);
     while(r.getLength() < 12){
-      CubePosition rayPos((int)r.getEnd().X,(int)r.getEnd().Y,(int)r.getEnd().Z);
+      CubePosition rayPos((int)floor(r.getEnd().X),(int)floor(r.getEnd().Y),(int)floor(r.getEnd().Z));
       Block* b = cb->findBlockSafe(rayPos);
 
       //printf("x: %f, y: %f, z: %f\n",r.getEnd().X,r.getEnd().Y,r.getEnd().Z);

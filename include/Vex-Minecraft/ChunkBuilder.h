@@ -30,9 +30,12 @@ public:
   TextureSheet tex = TextureSheet("/usd/Media/textures/texture.png",16,16);
 #endif
 
+  void buildChunk(int x, int y);
   void buildChunks(int xlength, int ylength);
   Block* findBlock(CubePosition pos);
   Block* findBlockSafe(CubePosition pos);
+
+  Chunk* findChunk(int x, int y);
 
   void breakBlock(CubePosition pos);
 

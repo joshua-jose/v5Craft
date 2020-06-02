@@ -142,13 +142,14 @@ void Chunk::try_add_face_to_mesh(Vector3f block_coords, Direction direction, Blo
       if(this_block.id != 0){
         auto adjChunk= adjacentChunks.find(direction);
         if (adjChunk != adjacentChunks.end()) {
-          int globX = block_coords.X+ (diameter*static_cast<int>(chunkCoordinate.X));
-          int globZ = block_coords.Z+ (diameter*static_cast<int>(chunkCoordinate.Y));
-          if (adjChunk->second->get_cube(CubePosition(globX,static_cast<int>(block_coords.Y),globZ))->id == 0){
-              should_add_face = true;
+          if (adjChunk->second != nullptr) {
+            int globX = block_coords.X+ (diameter*static_cast<int>(chunkCoordinate.X));
+            int globZ = block_coords.Z+ (diameter*static_cast<int>(chunkCoordinate.Y));
+            if (adjChunk->second->get_cube(CubePosition(globX,static_cast<int>(block_coords.Y),globZ))->id == 0){
+                should_add_face = true;
             }
-          }
-        else should_add_face = true;
+          } else should_add_face = true;
+        } else should_add_face = true;
       }
     }
 
@@ -203,7 +204,6 @@ int Chunk::to_index(int x, int y, int z){
 
 // Global cube position
 Block* Chunk::get_cube(struct CubePosition coordinate){
-
     int localX = coordinate.x- (diameter*static_cast<int>(chunkCoordinate.X));
     int localZ = coordinate.z- (diameter*static_cast<int>(chunkCoordinate.Y));
 
