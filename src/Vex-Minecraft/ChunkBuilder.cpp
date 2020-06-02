@@ -3,14 +3,14 @@
 
 void ChunkBuilder::buildChunk(int x, int y){
   Chunk c = Chunk(Vector2f(x,y),&tex, this);
-
-
-  for (std::pair<Direction,Chunk*> i: getAdjacentChunks(&c)){
-    if (i.second != nullptr)
-      i.second->generate_mesh();
-  }
   c.generate_mesh();
   chunks.push_back(c);
+  
+  for (std::pair<Direction,Chunk*> i: getAdjacentChunks(&c)){
+
+  if (i.second != nullptr)
+      i.second->generate_mesh();
+  }
 }
 
 void ChunkBuilder::buildChunks(int xlength, int ylength){
